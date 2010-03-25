@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<service plugin="libsharingplugintemplate.so" provider="Me"> 
+<service plugin="libsharingserviceyfrog.so" provider="Scott Raynel"> 
     
     <accounts plugInSetup="0" plugInEdit="0">
-      <signup>http://www.maemo.org</signup> 
+      <signup>http://www.twitter.com/signup</signup> 
       <password maxlen="32"/> 
     </accounts> 
     
     <ui>
-        <name>Template</name>
+        <name>Yfrog</name>
         <icon type="post">@servicesdir@/template-post.png</icon>
         <icon type="setup">@servicesdir@/template-setup.png</icon>
         <options>

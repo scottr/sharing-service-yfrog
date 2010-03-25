@@ -8,13 +8,13 @@
 # directory.
 #
 
-plugins_LTLIBRARIES = libtemplate.la
+plugins_LTLIBRARIES = libsharingserviceyfrog.la
 
-libtemplate_la_SOURCES = plugin.c common.c send.c validate.c
+libsharingserviceyfrog_la_SOURCES = plugin.c common.c send.c validate.c
 
-libtemplate_la_CFLAGS = $(PACKAGE_CFLAGS) $(DEBUG_CFLAGS)
-libtemplate_la_LDFLAGS = -module -avoid-version -export-dynamic
-libtemplate_la_LIBADD = $(PACKAGE_LIBS)
+libsharingserviceyfrog_la_CFLAGS = $(PACKAGE_CFLAGS) $(DEBUG_CFLAGS)
+libsharingserviceyfrog_la_LDFLAGS = -module -avoid-version -export-dynamic
+libsharingserviceyfrog_la_LIBADD = $(PACKAGE_LIBS)
 
 
 MAINTAINERCLEANFILES = Makefile.in
