@@ -16,6 +16,82 @@
 #include "send.h"
 #include "common.h"
 
+#define YFROG_UPLOAD_AND_POST_URL "http://yfrog.com/api/uploadAndPost"
+
+struct data_t {
+	guint64 total_size;
+	guint64 total_sent;
+	SharingTransfer *transfer;
+	gboolean *dead_mans_switch;
+};
+
+static gboolean
+send_progress_cb(SharingHTTP *http, guint64 bytes_send, gpointer user_data)
+{
+	struct data_t *data = (struct data_t *)user_data;
+	SharingTransfer *transfer = data->transfer;
+
+	*(data->dead_mans_switch) = FALSE;
+
+	if (transfer != NULL) {
+		if (sharing_transfer_continue(transfer) == FALSE) {
+			return FALSE;
+		}
+	}
+
+	/* The sum of all other media sent already + the current entry */
+	guint64 total_sent = data->total_sent + bytes_send;
+	sharing_transfer_set_progress(transfer, (gdouble)total_sent/(gdouble)data->total_size);
+
+	return TRUE;
+}
+
+/** Send a single media file.
+ *
+ */
+SharingPluginInterfaceSendResult send_media (SharingEntryMedia *media,
+		gchar *username, gchar *password, struct data_t *data)
+{
+	int ret = SHARING_SEND_SUCCESS;
+	SharingHTTP *http = sharing_http_new ();
+
+	gchar *filename = sharing_entry_media_get_filename(media);
+	gchar *mime = sharing_entry_media_get_mime(media);
+	const gchar *message = sharing_entry_media_get_desc(media);
+
+	sharing_http_add_req_multipart_data(http, "username", username, -1, "text/plain");
+	sharing_http_add_req_multipart_data(http, "password", password, -1, "text/plain");
+	sharing_http_add_req_multipart_data(http, "message", message ? message : "", -1, "text/plain");
+
+	sharing_http_add_req_multipart_file_with_filename(http, "media",
+			sharing_entry_media_get_localpath(media),
+			mime ? mime : "image/jpeg", filename ? filename : "image.jpg");
+
+	sharing_http_set_progress_callback(http, send_progress_cb, data);
+
+	SharingHTTPRunResponse res = sharing_http_run (http, YFROG_UPLOAD_AND_POST_URL);
+
+	switch(res) {
+		case SHARING_HTTP_RUNRES_SUCCESS:
+			ret = SHARING_SEND_SUCCESS;
+			break;
+		case SHARING_HTTP_RUNRES_CANCELLED:
+			ret = SHARING_SEND_CANCELLED;
+			break;
+		default:
+			ret = SHARING_SEND_ERROR_UNKNOWN;
+	}
+
+	sharing_http_unref (http);
+
+	if (filename)
+		g_free(filename);
+	if (mime)
+		g_free(mime);
+
+	return ret;
+}
+
 /**
  * send:
  * @account: #SharingTransfer to be send
@@ -29,31 +105,45 @@
 SharingPluginInterfaceSendResult send (SharingTransfer* transfer,
     ConIcConnection* con, gboolean* dead_mans_switch)
 {
-    SharingPluginInterfaceSendResult ret = SHARING_SEND_SUCCESS;
+	struct data_t *data = g_new0(struct data_t, 1);
+	SharingPluginInterfaceSendResult ret = SHARING_SEND_SUCCESS;
+	SharingAccount *account;
 
-    SharingEntry *entry = sharing_transfer_get_entry( transfer );
+	if (!data)
+		return SHARING_SEND_ERROR_UNKNOWN;
 
-    gint result = 0;
+	data->dead_mans_switch = dead_mans_switch;
+	data->transfer = transfer;
+	data->total_sent = 0;
 
-    for (GSList* p = sharing_entry_get_media (entry); p != NULL; p = g_slist_next(p)) {
-      SharingEntryMedia* media = p->data;
-      /* Process media */
-      if (!sharing_entry_media_get_sent (media)) {
-	/* Post media */
-	//result = my_send_task_post_function (my_send_task, media);
-	/* Process post result */
-	if (result == 0 /* EXAMPLE: MY_SEND_RESULT_SUCCESS */) {
-	  /* If success mark media as sent */
-	  sharing_entry_media_set_sent (media, TRUE);
-	  /* And mark process to your internal data structure */
-	  //my_send_task->upload_done += sharing_entry_media_get_size (media); 
-	} else {
-	  /* We have sent the file in last sharing-manager call */
-	  //my_send_task->upload_done += sharing_entry_media_get_size (media);
+	SharingEntry *entry = sharing_transfer_get_entry( transfer );
+	data->total_size = sharing_entry_get_size(entry);
+
+	account = sharing_entry_get_account(entry);
+	gchar *username = sharing_account_get_username(account);
+	gchar *password = sharing_account_get_password(account);
+
+	for (GSList* p = sharing_entry_get_media (entry); p != NULL; p = g_slist_next(p)) {
+		SharingEntryMedia* media = p->data;
+
+		/* Skip media that's already been sent before */
+		if (sharing_entry_media_get_sent(media))
+			continue;
+
+		/* Post media */
+		ret = send_media (media, username, password, data);
+
+		/* Keep track of total progress */
+		data->total_sent += sharing_entry_media_get_size(media);
+
+		/* Break out of the sending loop if anything bad happened */
+		if (ret != SHARING_SEND_SUCCESS)
+			break;
 	}
-      }
-    }
 
-    return ret;
+	sharing_account_free(account);
+	g_free(data);
+
+	return ret;
 }
 
