@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <glib.h>
+#include <string.h>
 #include <osso-log.h>
 #include <sharing-http.h>
 #include "send.h"
@@ -46,6 +47,19 @@ send_progress_cb(SharingHTTP *http, guint64 bytes_send, gpointer user_data)
 	return TRUE;
 }
 
+static gboolean
+transfer_upload_is_public(SharingTransfer *transfer)
+{
+	gboolean is_public = TRUE;
+	SharingEntry *entry = sharing_transfer_get_entry(transfer);
+	const gchar *value = sharing_entry_get_option(entry, "privacy");
+
+	if (value && (strncmp(value, "private", strlen(value)) == 0))
+		is_public = FALSE;
+
+	return is_public;
+}
+
 /** Send a single media file.
  *
  */
@@ -55,12 +69,15 @@ SharingPluginInterfaceSendResult send_media (SharingEntryMedia *media,
 	int ret = SHARING_SEND_SUCCESS;
 	SharingHTTP *http = sharing_http_new ();
 
+	gboolean public = transfer_upload_is_public(data->transfer);
+
 	gchar *filename = sharing_entry_media_get_filename(media);
 	gchar *mime = sharing_entry_media_get_mime(media);
 	const gchar *message = sharing_entry_media_get_desc(media);
 
 	sharing_http_add_req_multipart_data(http, "username", username, -1, "text/plain");
 	sharing_http_add_req_multipart_data(http, "password", password, -1, "text/plain");
+	sharing_http_add_req_multipart_data(http, "public", public ? "yes" : "no", -1, "text/plain");
 	sharing_http_add_req_multipart_data(http, "message", message ? message : "", -1, "text/plain");
 
 	sharing_http_add_req_multipart_file_with_filename(http, "media",
