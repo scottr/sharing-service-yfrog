@@ -102,7 +102,7 @@ SharingPluginInterfaceSendResult send_media (SharingEntryMedia *media,
  *
  * Returns: #SharingPluginInterfaceSendResult
  */
-SharingPluginInterfaceSendResult send (SharingTransfer* transfer,
+SharingPluginInterfaceSendResult yfrog_send (SharingTransfer* transfer,
     ConIcConnection* con, gboolean* dead_mans_switch)
 {
 	struct data_t *data = g_new0(struct data_t, 1);
@@ -132,6 +132,8 @@ SharingPluginInterfaceSendResult send (SharingTransfer* transfer,
 
 		/* Post media */
 		ret = send_media (media, username, password, data);
+
+		sharing_entry_media_set_sent(media, TRUE);
 
 		/* Keep track of total progress */
 		data->total_sent += sharing_entry_media_get_size(media);

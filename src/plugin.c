@@ -63,7 +63,7 @@ SharingPluginInterfaceSendResult sharing_plugin_interface_send
 {
     ULOG_DEBUG_L ("sharing_plugin_interface_send");
     SharingPluginInterfaceSendResult ret_val = SHARING_SEND_ERROR_UNKNOWN;
-    ret_val = send (transfer, con, dead_mans_switch);
+    ret_val = yfrog_send (transfer, con, dead_mans_switch);
     return ret_val;
 }
 

@@ -20,7 +20,7 @@
 
 G_BEGIN_DECLS
 
-SharingPluginInterfaceSendResult send (SharingTransfer* transfer,
+SharingPluginInterfaceSendResult yfrog_send (SharingTransfer* transfer,
     ConIcConnection* con, gboolean* dead_mans_switch);
 
 G_END_DECLS
