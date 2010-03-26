@@ -1,5 +1,5 @@
 Source: sharing-service-yfrog
-Section: user/other
+Section: user/multimedia
 Priority: optional
 Maintainer: Scott Raynel <scottraynel@gmail.com>
 Build-Depends: debhelper (>= 5.0.0), 
@@ -9,7 +9,9 @@ Build-Depends: debhelper (>= 5.0.0),
 Standards-Version: 3.8.0
 
 Package: sharing-service-yfrog
-Section: user/other
+Section: user/multimedia
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, sharing-manager, libsharing0
-Description: Upload photos and videos to the yfrog.com service
+Description: Upload photos and videos to the yfrog.com service.
+ This package installs a sharing plugin to allow you to upload photos to the
+ yfrog.com image sharing service, using your twitter.com account.
