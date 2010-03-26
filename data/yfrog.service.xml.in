@@ -17,9 +17,9 @@
                 <value id="upload" key="Upload only"/>
             </option>
             <option id="privacy" type="enumeration" default="public">
-                <caption domain="osso-sharing-ui" key="share_bd_options_privacy"/>
-                <value id="private" domain="osso-sharing-ui" key="share_fi_options_privacy_private"/>
-                <value id="public" domain="osso-sharing-ui" key="share_fi_options_privacy_public"/>
+                <caption key="Privacy"/>
+                <value id="public" key="Public - will appear on yfrog.com timeline"/>
+                <value id="private" key="Private - will still post link on twitter"/>
             </option>
         </options>
     </ui> 
