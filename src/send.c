@@ -18,6 +18,7 @@
 #include "common.h"
 
 #define YFROG_UPLOAD_AND_POST_URL "http://yfrog.com/api/uploadAndPost"
+#define YFROG_UPLOAD_ONLY_URL "http://yfrog.com/api/upload"
 
 struct data_t {
 	guint64 total_size;
@@ -60,6 +61,19 @@ transfer_upload_is_public(SharingTransfer *transfer)
 	return is_public;
 }
 
+static gboolean
+transfer_upload_and_post(SharingTransfer *transfer)
+{
+	gboolean post = FALSE;
+	SharingEntry *entry = sharing_transfer_get_entry(transfer);
+	const gchar *value = sharing_entry_get_option(entry, "post");
+
+	if (value && (strncmp(value, "uploadAndPost", strlen("uploadAndPost")) == 0))
+		post = TRUE;
+
+	return post;
+}
+
 /** Send a single media file.
  *
  */
@@ -70,6 +84,7 @@ SharingPluginInterfaceSendResult send_media (SharingEntryMedia *media,
 	SharingHTTP *http = sharing_http_new ();
 
 	gboolean public = transfer_upload_is_public(data->transfer);
+	gboolean post = transfer_upload_and_post(data->transfer);
 
 	gchar *filename = sharing_entry_media_get_filename(media);
 	gchar *mime = sharing_entry_media_get_mime(media);
@@ -86,7 +101,15 @@ SharingPluginInterfaceSendResult send_media (SharingEntryMedia *media,
 
 	sharing_http_set_progress_callback(http, send_progress_cb, data);
 
-	SharingHTTPRunResponse res = sharing_http_run (http, YFROG_UPLOAD_AND_POST_URL);
+	gchar *url;
+	if (post == TRUE)
+		url = g_strdup(YFROG_UPLOAD_AND_POST_URL);
+	else
+		url = g_strdup(YFROG_UPLOAD_ONLY_URL);
+
+	SharingHTTPRunResponse res = sharing_http_run (http, url);
+
+	g_free(url);
 
 	switch(res) {
 		case SHARING_HTTP_RUNRES_SUCCESS:
