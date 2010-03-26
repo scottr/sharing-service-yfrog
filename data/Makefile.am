@@ -8,7 +8,7 @@
 # directory.
 #
 
-services_DATA = yfrog.service.xml template-post.png template-setup.png
+services_DATA = yfrog.service.xml yfrog-post.png yfrog-setup.png
 
 EXTRA_DIST = $(services)
 
