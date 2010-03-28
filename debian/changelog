@@ -1,3 +1,10 @@
+sharing-plugin-yfrog (0.3) unstable; urgency=low
+
+  * Change package name to sharing-plugin-yfrog to avoid
+    conflicts.
+
+ -- Scott Raynel <scottraynel@gmail.com>  Sun, 28 Mar 2010 15:25:30 +0100
+
 sharing-service-yfrog (0.2) unstable; urgency=low
 
   * Add posting control option
