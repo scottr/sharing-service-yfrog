@@ -1,3 +1,9 @@
+sharing-plugin-yfrog (0.4) unstable; urgency=low
+
+  * Update icons and add a display name for the application manager. 
+
+ -- Scott Raynel <scottraynel@gmail.com>  Mon, 29 Mar 2010 00:15:04 +0100
+
 sharing-plugin-yfrog (0.3) unstable; urgency=low
 
   * Change package name to sharing-plugin-yfrog to avoid
