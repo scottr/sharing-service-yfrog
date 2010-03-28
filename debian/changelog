@@ -1,3 +1,11 @@
+sharing-service-yfrog (0.2) unstable; urgency=low
+
+  * Add posting control option
+  * Add privacy control option
+  * Use a unique icon name for the plugin.
+
+ -- Scott Raynel <scottraynel@gmail.com>  Fri, 26 Mar 2010 23:44:21 +0000
+
 sharing-service-yfrog (0.1) unstable; urgency=low
 
   * Initial release
