@@ -8,8 +8,8 @@
     
     <ui>
         <name>Yfrog</name>
-        <icon type="post">@servicesdir@/template-post.png</icon>
-        <icon type="setup">@servicesdir@/template-setup.png</icon>
+        <icon type="post">@servicesdir@/yfrog_42.png</icon>
+        <icon type="setup">@servicesdir@/yfrog_42.png</icon>
 	<options>
 	    <option id="post" type="enumeration" default="uploadAndPost">
                 <caption key="Post to twitter?"/>
