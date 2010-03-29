@@ -1,3 +1,9 @@
+sharing-plugin-yfrog (0.4-1) unstable; urgency=low
+
+  * Add XSBC-Bugtracker field to debian/control
+
+ -- Scott Raynel <scottraynel@gmail.com>  Mon, 29 Mar 2010 22:49:59 +0100
+
 sharing-plugin-yfrog (0.4) unstable; urgency=low
 
   * Update icons and add a display name for the application manager. 

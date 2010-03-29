@@ -13,6 +13,7 @@ Section: user/multimedia
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, sharing-manager, libsharing0
 Description: Upload photos and videos to the yfrog.com service.
+XSBC-Bugtracker: mailto:scottraynel@gmail.com
 XB-Maemo-Display-Name: Sharing plugin for yfrog.com
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c
